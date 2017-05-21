@@ -118,7 +118,9 @@ uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
 	
 				// Handled differently
 				case OPTTYPE_STRING:
-					wasinarg->outdata = curropt;
+					*(wasinarg->outdata) = curropt;
+					wasinarg = NULL;
+					format_specifier[0] = 0;
 					continue;
 			}
 			sscanf(curropt, format_specifier, wasinarg->outdata);
