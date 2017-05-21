@@ -4,10 +4,10 @@
 
 int main(int argc, char **argv) {
 	bool debug = false;
-	char *name;
+	char *name = NULL;
 	float boat;
 
-	struct opttype opts[] = { {"debug", 'd', OPTTYPE_BOOL, &debug}, {"name", 'n', OPTTYPE_STRING, name}, {"boat", 'b', OPTTYPE_FLOAT, &boat}, {0, 0, 0, 0} };
+	struct opttype opts[] = { {"debug", 'd', OPTTYPE_BOOL, &debug}, {"name", 'n', OPTTYPE_STRING, &name}, {"boat", 'b', OPTTYPE_FLOAT, &boat}, {0, 0, 0, 0} };
 
 	int c = fetchopts(argc, argv, opts);
 
