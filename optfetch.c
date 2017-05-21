@@ -27,6 +27,10 @@ uint32_t countopts(struct opttype *opts) {
 
 int32_t get_option_index_short(char opt, char *potentialopts, uint32_t len) {
 	for (uint32_t i = 0; i < len; i++) {
+		if (potentialopts[i] == 0) {
+			continue;
+		}
+
 		if (potentialopts[i] == opt) {
 			return i;
 		}
@@ -37,6 +41,10 @@ int32_t get_option_index_short(char opt, char *potentialopts, uint32_t len) {
 
 int32_t get_option_index_long(char *opt, char **potentialopts, uint32_t len) {
 	for (uint32_t i = 0; i < len; i++) {
+		if (potentialopts[i] == NULL) {
+			continue;
+		}
+
 		if (strcmp(potentialopts[i], opt)) {
 			return i;
 		}
