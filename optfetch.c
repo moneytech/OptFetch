@@ -55,7 +55,7 @@ int32_t get_option_index_long(char *opt, char **potentialopts, uint32_t len) {
 
 
 
-uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
+uint32_t fetchopts(uint32_t argc, char **argv, struct opttype *opts) {
 	char **longopts;
 	char *shortopts;
 	char *curropt;
@@ -71,7 +71,8 @@ uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
 
 	struct opttype *wasinarg = NULL;
 
-	char oneoffset;
+	// char to take up less memory, unsigned so compiler doesn't complain
+	unsigned char oneoffset;
 	uint32_t newargc;
 	int32_t option_index;
 	uint32_t numopts = countopts(opts);

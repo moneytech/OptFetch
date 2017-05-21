@@ -1,1 +1,3 @@
 .*.swp
+optfetch.o
+liboptfetch.so
