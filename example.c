@@ -3,13 +3,13 @@
 #include <stdbool.h>
 
 int main(int argc, char **argv) {
-	bool debug = false;
+	int debug = false;
 	char *name = NULL;
 	float boat;
 
 	struct opttype opts[] = { {"debug", 'd', OPTTYPE_BOOL, &debug}, {"name", 'n', OPTTYPE_STRING, &name}, {"boat", 'b', OPTTYPE_FLOAT, &boat}, {0, 0, 0, 0} };
 
-	int c = fetchopts(argc, argv, opts);
+	fetchopts(&argc, &argv, opts);
 
 	if (debug) {
 		printf("Did debug.\n");
@@ -19,7 +19,11 @@ int main(int argc, char **argv) {
 
 	printf("My boat is %f feet long.  How about yours?\n", boat);
 
-	printf("Looks like I have %d arguments left over.  Fancy that now!\n", argc - c);
+	printf("Looks like I have %d arguments left over.  Fancy that now!\n", argc);
+	printf("They are:\n");
+	for (int i = 1; i <= argc; i++) {
+		printf("* %s\n", argv[i]);
+	}
 
 	return 0;
 }

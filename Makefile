@@ -1,6 +1,10 @@
 CC ?= cc
 
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -Werror -O2 -fPIC
+CFLAGS-base = -std=c99 -Wall -Wextra -pedantic -Werror -fPIC
+CFLAGS-release = -O2 -fomit-frame-pointer
+CFLAGS-debug = -g3 -ggdb -O0 -DDEBUG
+
+CFLAGS = $(CFLAGS-base) $(CFLAGS-release)
 
 optfetch:
 	$(CC) $(CFLAGS) -c optfetch.c
@@ -9,3 +13,6 @@ optfetch:
 install: optfetch
 	cp optfetch.h /usr/local/include/
 	cp liboptfetch.so /usr/local/lib/
+
+clean:
+	rm optfetch.o liboptfetch.so
