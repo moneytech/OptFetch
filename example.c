@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
 	printf("My boat is %f feet long.  How about yours?\n", boat);
 
-	printf("Looks like I have %d arguments left over.  Fancy that now!\n", c);
+	printf("Looks like I have %d arguments left over.  Fancy that now!\n", argc - c);
 
 	return 0;
 }

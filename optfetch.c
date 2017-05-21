@@ -45,7 +45,7 @@ int32_t get_option_index_long(char *opt, char **potentialopts, uint32_t len) {
 			continue;
 		}
 
-		if (strcmp(potentialopts[i], opt)) {
+		if (!strcmp(potentialopts[i], opt)) {
 			return i;
 		}
 	}
@@ -60,13 +60,14 @@ uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
 	char *shortopts;
 	char *curropt;
 
-	// %Lf long double
-	// %lf double
-	// %f float
-	// %u unsigned int
-	// %d int
-	// max 5 digits (%l64u), plus an EOF
+	// max 5 digits (%l64u) on windows,
+	// but only 4 (%llu) on unix (plus an EOF)
+#ifdef _WIN32
 	char format_specifier[6];
+#else
+	char format_specifier[5];
+#endif
+	// gotta save that extra byte of memory
 
 	struct opttype *wasinarg = NULL;
 
@@ -88,7 +89,7 @@ uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
 
 	// start at 1 because 0 is the executable name
 	for (newargc = 1; newargc < argc; newargc++) {
-		curropt = argv[newargc];
+		if ((curropt = argv[newargc]) == NULL) continue;
 
 		// Last argument was an option, now we're setting the actual value of that option
 		if (wasinarg != NULL) {
@@ -118,7 +119,7 @@ uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
 	
 				// Handled differently
 				case OPTTYPE_STRING:
-					*(wasinarg->outdata) = curropt;
+					*(char**)(wasinarg->outdata) = curropt;
 					wasinarg = NULL;
 					format_specifier[0] = 0;
 					continue;
@@ -128,7 +129,7 @@ uint32_t fetchopts(int argc, char **argv, struct opttype *opts) {
 			wasinarg = NULL;
 		} else {
 			// Has the user manually demanded that the option-parsing end now?
-			if (strcmp(curropt, "--")) {
+			if (!strcmp(curropt, "--")) {
 				free(longopts);
 				free(shortopts);
 				newargc++;
