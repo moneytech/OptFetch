@@ -1,0 +1,23 @@
+OptFetch is a lightweight library for parsing options from the command-line.
+
+
+OVERVIEW
+
+OptFetch has just one function, fetchopts().  It takes a pointer to argc and argv, and an array of opttype structs.  Each opttype struct contains a "long" option name, a "short" option name, and option type, and a pointer to a variable which will hold the option.  Either of the "long" and "short" options may be omitted, but both may not.
+
+
+OVERVIEW/USAGE
+
+See example.c for usage.  Most of the OPTTYPES should be self-explanatory.  The library itself is written in c99, however it can be called by code compiled as c89; and, as per example.c, OPTTYPE_BOOL can place truthy/falsey values in a bool, or in *any* int-type.  Do note that in the case of OPTTYPE_BOOL, simply receiving the flag constitutes being enabled, so if you would like something of the form of "--dox yes", you will have to do that yourself with strcmp.
+
+The function takes pointers to argc and argv because it modifies them.  It removes all the flags, leaving only the arguments.  argv[0] is untouched, and still corresponds to the executable name.
+
+
+IDEAS FOR THE FUTURE
+
+* Right now, both -longopt --longopt -shortopt --shortopt.  Maybe add a way to customize which are allowed?
+* Right now, if an argument begins with "-" but it is not passed in as an option, it is passed back as an argument.  If there's an intelligent way of doing so I'd like to pass this back as an invalid flag.
+* If a, b, and c are all OPTTYPE_BOOLs, you should be able to do -abc
+* * But how do we reconcile if there's a longopt called "abc"?
+* * * Could make this behaviour optional, and when it's enabled it acts similarly to getopt, where you do -shortopt, but need --longopts
+* * If a and b are OPTTYPE_BOOLs and c is an OPTTYPE_STRING, you should be able to do -abc foo
