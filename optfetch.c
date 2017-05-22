@@ -60,7 +60,7 @@ int32_t get_option_index_long(char *opt, char **potentialopts, uint32_t len) {
 
 
 
-signed char fetchopts(uint32_t *argc, char ***argv, struct opttype *opts) {
+signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 	uint32_t numopts = countopts(opts);
 	if (!numopts) {
 		return 0;
@@ -84,7 +84,7 @@ signed char fetchopts(uint32_t *argc, char ***argv, struct opttype *opts) {
 	// char to take up less memory, unsigned so compiler doesn't complain
 	unsigned char oneoffset;
 
-	uint32_t argindex, newargc = 0;
+	int argindex, newargc = 0;
 
 	// new argument variable with the arguments that aren't options
 	char *newargv[*argc];
@@ -143,7 +143,7 @@ signed char fetchopts(uint32_t *argc, char ***argv, struct opttype *opts) {
 			// Has the user manually demanded that the option-parsing end now?
 			if (!strcmp(curropt, "--")) {
 				// copy over the remaining arguments to newargv
-				for (uint32_t i = argindex+1; i < *argc; i++) {
+				for (int i = argindex+1; i < *argc; i++) {
 					newargv[newargc] = (*argv)[i];
 					newargc++;
 				}
@@ -194,7 +194,7 @@ signed char fetchopts(uint32_t *argc, char ***argv, struct opttype *opts) {
 end:
 	*argc = newargc;
 
-	for (uint32_t i = 1; i <= newargc; i++) {
+	for (int i = 1; i <= newargc; i++) {
 		// -1, because argv starts at 1 (with 0 as program name), but newargv starts at 0
 		(*argv)[i] = newargv[i-1];
 	}
