@@ -3,14 +3,24 @@ OptFetch is a lightweight library for parsing options from the command-line.
 
 OVERVIEW
 
-OptFetch has just one function, fetchopts().  It takes a pointer to argc and argv, and an array of opttype structs.  Each opttype struct contains a "long" option name, a "short" option name, and option type, and a pointer to a variable which will hold the option.  Either of the "long" and "short" options may be omitted, but both may not.
+OptFetch has just one function, fetchopts().  It takes a pointer to argc and
+argv, and an array of opttype structs.  Each opttype struct contains a "long"
+option name, a "short" option name, and option type, and a pointer to a
+variable which will hold the option.  Either of the "long" and "short" options
+may be omitted, but both may not.
 
 
 OVERVIEW/USAGE
 
-See example.c for usage.  Most of the OPTTYPES should be self-explanatory.  Do note that in the case of OPTTYPE_BOOL, simply receiving the flag constitutes being enabled, so if you want to do something like "--dox yes", you will have to pass an OPTTYPE_STRING and do a strcmp yourself.  The library is written in ansi c89, so it should work *pretty much* anywhere.
+See example.c for usage.  Most of the OPTTYPES should be self-explanatory.  Do
+note that in the case of OPTTYPE_BOOL, simply receiving the flag constitutes
+being enabled, so if you want to do something like "--dox yes", you will have to
+pass an OPTTYPE_STRING and do a strcmp yourself.  The library is written in ansi
+c89, so it should work *pretty much* anywhere.
 
-The function takes pointers to argc and argv because it modifies them.  It removes all the flags, leaving only the arguments.  argv[0] is untouched, and still corresponds to the executable name.
+The function takes pointers to argc and argv because it modifies them.  It
+removes all the flags, leaving only the arguments.  argv[0] is untouched, and
+still corresponds to the executable name.
 
 
 IDEAS FOR THE FUTURE
