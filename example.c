@@ -5,7 +5,7 @@
 int main(int argc, char **argv) {
 	int debug = false;
 	char *name = NULL;
-	float boat;
+	float boat = 0.0;
 
 	struct opttype opts[] = { {"debug", 'd', OPTTYPE_BOOL, &debug}, {"name", 'n', OPTTYPE_STRING, &name}, {"boat", 'b', OPTTYPE_FLOAT, &boat}, {0, 0, 0, 0} };
 
