@@ -1,6 +1,6 @@
 CC ?= cc
 
-CFLAGS-base = -std=c99 -Wall -Wextra -pedantic -Werror -fPIC
+CFLAGS-base = -std=c89 -Wall -Wextra -pedantic -Werror -fPIC
 CFLAGS-release = -O2 -fomit-frame-pointer
 CFLAGS-debug = -g3 -ggdb -O0 -DDEBUG
 
