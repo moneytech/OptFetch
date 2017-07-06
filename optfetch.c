@@ -5,7 +5,7 @@
 #include <stdlib.h> /* malloc, free */
 
 #ifdef DEBUG
-void dbprintf(const char *s, ...) {
+static void dbprintf(const char *s, ...) {
 	va_list args;
 	va_start(args, s);
 
@@ -14,7 +14,7 @@ void dbprintf(const char *s, ...) {
 	va_end(args);
 }
 #else
-void dbprintf(const char *s, ...) {
+static void dbprintf(const char *s, ...) {
 	/* so the compiler doesn't complain */
 	(void) s;
 }
