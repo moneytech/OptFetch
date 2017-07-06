@@ -1,4 +1,5 @@
 .*.swp
 optfetch.o
 liboptfetch.so
+liboptfetch.a
 example
