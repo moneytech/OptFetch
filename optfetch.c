@@ -1,20 +1,20 @@
 #include "optfetch.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h> /* malloc, free */
 
-
 #ifdef DEBUG
-static void dprintf(const char *s, ...) {
+void dbprintf(const char *s, ...) {
 	va_list args;
 	va_start(args, s);
 
-	vfprintf(stderr, s, args)
+	vfprintf(stderr, s, args);
 
 	va_end(args);
 }
 #else
-static void dprintf(const char *s, ...) {
+void dbprintf(const char *s, ...) {
 	/* so the compiler doesn't complain */
 	(void) s;
 }
@@ -81,9 +81,7 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 	char *shortopts;
 	char *curropt;
 
-	/* max 5 digits (%l64u) on windows,
-	 * but only 4 (%llu) on unix (plus an EOF)
-	 */
+	/* max 5 digits (%l64u) on windows, * but only 4 (%llu) on unix (plus an EOF) */
 #ifdef _WIN32
 	char format_specifier[6];
 #else
@@ -200,7 +198,7 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				/* not an option */
 				if (option_index == -1) {
 					newargv[newargc++] = curropt;
-					dprintf("Faulty option %s.\n", curropt);
+					dbprintf("Faulty option %s.\n", curropt);
 					continue;
 				} else {
 					/* it's a boolean option, so the next loop doesn't want to know about it */
@@ -215,7 +213,7 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				}
 			} else {
 				newargv[newargc++] = curropt;
-				dprintf("Regular argument %s.\n", curropt);
+				dbprintf("Regular argument %s.\n", curropt);
 			}
 		}
 	}
