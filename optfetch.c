@@ -21,7 +21,7 @@ static void dprintf(const char *s, ...) {
 #endif
 
 
-int countopts(struct opttype *opts) {
+static int countopts(struct opttype *opts) {
 	int i = 0;
 
 	while (1) {
@@ -40,7 +40,7 @@ int countopts(struct opttype *opts) {
 	return 0;
 }
 
-int get_option_index_short(char opt, char *potentialopts, int len) {
+static int get_option_index_short(char opt, char *potentialopts, int len) {
 	int i;
 
 	for (i = 0; i < len; i++) {
@@ -56,7 +56,7 @@ int get_option_index_short(char opt, char *potentialopts, int len) {
 	return -1;
 }
 
-int get_option_index_long(char *opt, char **potentialopts, int len) {
+static int get_option_index_long(char *opt, char **potentialopts, int len) {
 	int i;
 
 	for (i = 0; i < len; i++) {
