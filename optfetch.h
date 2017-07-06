@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 struct opttype {
 	char *longname;
 	char shortname;
