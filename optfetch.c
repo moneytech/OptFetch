@@ -2,34 +2,26 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdlib.h> /* malloc, free */
+#include <stdlib.h> // malloc, free
 
 #ifdef DEBUG
-static void dbprintf(const char *s, ...) {
-	va_list args;
-	va_start(args, s);
-
-	vfprintf(stderr, s, args);
-
-	va_end(args);
-}
+# define dbprintf(...) fprintf(stderr, __VA_ARGS)
 #else
-static void dbprintf(const char *s, ...) {
-	/* so the compiler doesn't complain */
-	(void) s;
-}
+# define dbprintf(...) // nothing
 #endif
+
+typedef unsigned int uint;
 
 
 static int countopts(struct opttype *opts) {
-	int i = 0;
+	uint i = 0;
 
 	while (1) {
-		/* longname and short name are both 0, OR */
+		// longname and short name are both 0, OR
 		if (((opts[i].longname == NULL) && (opts[i].shortname == 0)) ||
-		/* output type was unspecified OR */
+		// output type was unspecified OR
 		((opts[i].type == 0) || (opts[i].type > OPTTYPE_STRING)) ||
-		/* nowhere to output data! */
+		// nowhere to output data!
 		(opts[i].outdata == NULL)) {
 			return i;
 		}
@@ -40,10 +32,8 @@ static int countopts(struct opttype *opts) {
 	return 0;
 }
 
-static int get_option_index_short(char opt, char *potentialopts, int len) {
-	int i;
-
-	for (i = 0; i < len; i++) {
+static int get_option_index_short(char opt, char *potentialopts, uint len) {
+	for (uint i = 0; i < len; i++) {
 		if (potentialopts[i] == 0) {
 			continue;
 		}
@@ -56,10 +46,8 @@ static int get_option_index_short(char opt, char *potentialopts, int len) {
 	return -1;
 }
 
-static int get_option_index_long(char *opt, char **potentialopts, int len) {
-	int i;
-
-	for (i = 0; i < len; i++) {
+static int get_option_index_long(char *opt, char **potentialopts, uint len) {
+	for (uint i = 0; i < len; i++) {
 		if (potentialopts[i] == NULL) {
 			continue;
 		}
@@ -75,58 +63,47 @@ static int get_option_index_long(char *opt, char **potentialopts, int len) {
 
 
 signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
-	int numopts;
+	uint numopts = countopts(opts);
+	if (!numopts) {
+		return 0;
+	}
 
-	char **longopts;
-	char *shortopts;
+	char *longopts[numopts];
+	char shortopts[numopts];
 	char *curropt;
 
-	/* max 5 digits (%l64u) on windows, * but only 4 (%llu) on unix (plus an EOF) */
+	// max 5 digits (%l64u) on windows,
+	// but only 4 (%llu) on unix (plus an EOF)
 #ifdef _WIN32
 	char format_specifier[6];
 #else
 	char format_specifier[5];
 #endif
-	/* gotta save that extra byte of memory */
+	// gotta save that extra byte of memory
 
 	struct opttype *wasinarg = NULL;
 
-	/* char to take up less memory, unsigned so compiler doesn't complain */
+	// char to take up less memory, unsigned so compiler doesn't complain
 	unsigned char oneoffset;
 
 	int argindex, newargc = 0;
 
-	/* new argument variable with the arguments that aren't options */
-	char **newargv = malloc(sizeof(char*) * (*argc));
+	// new argument variable with the arguments that aren't options
+	char *newargv[*argc];
 
 	int option_index;
 
-	int i; /* Counter for loops */
-
-
-
-	numopts = countopts(opts);
-
-	if (!numopts) {
-		return 0;
-	}
-
-	longopts = malloc(sizeof(char*) * numopts);
-	shortopts = malloc(sizeof(char) * numopts);
-
-
-
-	/* fill these up with opts.  That way they're easier to look up */
-	for (i = 0; i < numopts; i++) {
+	// fill these up with opts.  That way they're easier to look up
+	for (uint i = 0; i < numopts; i++) {
 		longopts[i] = opts[i].longname;
 		shortopts[i] = opts[i].shortname;
 	}
 
-	/* start at 1 because 0 is the executable name */
+	// start at 1 because 0 is the executable name
 	for (argindex = 1; argindex < *argc; argindex++) {
 		if ((curropt = (*argv)[argindex]) == NULL) continue;
 
-		/* Last argument was an option, now we're setting the actual value of that option */
+		// Last argument was an option, now we're setting the actual value of that option
 		if (wasinarg != NULL) {
 			switch (wasinarg->type) {
 				/* We set the format specifier here then make
@@ -167,10 +144,10 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 			wasinarg = NULL;
 			format_specifier[0] = 0;
 		} else {
-			/* Has the user manually demanded that the option-parsing end now? */
+			// Has the user manually demanded that the option-parsing end now?
 			if (!strcmp(curropt, "--")) {
-				/* copy over the remaining arguments to newargv */
-				for (i = argindex+1; i < *argc; i++) {
+				// copy over the remaining arguments to newargv
+				for (int i = argindex+1; i < *argc; i++) {
 					newargv[newargc] = (*argv)[i];
 					newargc++;
 				}
@@ -178,35 +155,35 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				goto end;
 			}
 
-			/* in an option, getting warmer! */
+			// in an option, getting warmer!
 			if (curropt[0] == '-') {
-				/* was it a --foo or just a -foo? */
+				// was it a --foo or just a -foo?
 				if (curropt[1] == '-') {
 					oneoffset = 2;
 				} else {
 					oneoffset = 1;
 				}
 
-				/* is it a short opt (e.g. -f) or a long one (e.g. -foo)? */
+				// is it a short opt (e.g. -f) or a long one (e.g. -foo)?
 				if (strlen(curropt+oneoffset) == 1) {
 					option_index = get_option_index_short(curropt[oneoffset], shortopts, numopts);
-				/* nope */
+				// nope
 				} else {
 					option_index = get_option_index_long(curropt+oneoffset, longopts, numopts);
 				}
 
-				/* not an option */
+				// not an option
 				if (option_index == -1) {
 					newargv[newargc++] = curropt;
 					dbprintf("Faulty option %s.\n", curropt);
 					continue;
 				} else {
-					/* it's a boolean option, so the next loop doesn't want to know about it */
+					// it's a boolean option, so the next loop doesn't want to know about it
 					if ((opts[option_index]).type == OPTTYPE_BOOL) {
 						*(int*)opts[option_index].outdata = 1;
-						/* just to make sure */
+						// just to make sure
 						wasinarg = NULL;
-					/* let the next loop get the value */
+					// let the next loop get the value
 					} else {
 						wasinarg = &opts[option_index];
 					}
@@ -221,14 +198,10 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 end:
 	*argc = newargc;
 
-	for (i = 1; i <= newargc; i++) {
+	for (int i = 1; i <= newargc; i++) {
 		/* -1, because argv starts at 1 (with 0 as program name), but newargv starts at 0 */
 		(*argv)[i] = newargv[i-1];
 	}
-
-	free(longopts);
-	free(shortopts);
-	free(newargv);
 
 	return 1;
 }

@@ -19,10 +19,13 @@ int main(int argc, char **argv) {
 
 	printf("My boat is %f feet long.  How about yours?\n", boat);
 
-	printf("Looks like I have %d arguments left over.  Fancy that now!\n", argc);
-	printf("They are:\n");
-	for (int i = 1; i <= argc; i++) {
-		printf("* %s\n", argv[i]);
+	printf("Looks like I have %d argument%s left over.  Fancy that now!\n", argc, (argc == 1) ? "" : "s");
+
+	if (argc) {
+		printf("They are:\n");
+		for (int i = 1; i <= argc; i++) {
+			printf("* %s\n", argv[i]);
+		}
 	}
 
 	return 0;

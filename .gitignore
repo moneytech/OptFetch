@@ -3,3 +3,4 @@ optfetch.o
 liboptfetch.so
 liboptfetch.a
 example
+example.o
