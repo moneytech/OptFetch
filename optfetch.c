@@ -2,10 +2,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdlib.h> // malloc, free
 
 #ifdef DEBUG
-# define dbprintf(...) fprintf(stderr, __VA_ARGS)
+# define dbprintf(...) fprintf(stderr, __VA_ARGS__)
 #else
 # define dbprintf(...) // nothing
 #endif
@@ -28,7 +27,6 @@ static int countopts(struct opttype *opts) {
 
 		i++;
 	}
-
 	return 0;
 }
 
@@ -36,13 +34,10 @@ static int get_option_index_short(char opt, char *potentialopts, uint len) {
 	for (uint i = 0; i < len; i++) {
 		if (potentialopts[i] == 0) {
 			continue;
-		}
-
-		if (potentialopts[i] == opt) {
+		} else if (potentialopts[i] == opt) {
 			return i;
 		}
 	}
-
 	return -1;
 }
 
@@ -50,16 +45,12 @@ static int get_option_index_long(char *opt, char **potentialopts, uint len) {
 	for (uint i = 0; i < len; i++) {
 		if (potentialopts[i] == NULL) {
 			continue;
-		}
-
-		if (!strcmp(potentialopts[i], opt)) {
+		} else if (!strcmp(potentialopts[i], opt)) {
 			return i;
 		}
 	}
-
 	return -1;
 }
-
 
 
 signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
@@ -72,26 +63,25 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 	char shortopts[numopts];
 	char *curropt;
 
-	// max 5 digits (%l64u) on windows,
-	// but only 4 (%llu) on unix (plus an EOF)
+	// max 5 digits (%l64u) on windows, but only 4 (%llu) on unix (plus an EOF)
 #ifdef _WIN32
 	char format_specifier[6];
 #else
 	char format_specifier[5];
 #endif
-	// gotta save that extra byte of memory
+	// gotta save that extra byte of memory.
+	// It isn't even saved since it's stack-allocated and the stack is pre-allocated but *shrug*
 
 	struct opttype *wasinarg = NULL;
 
 	// char to take up less memory, unsigned so compiler doesn't complain
 	unsigned char oneoffset;
 
-	int argindex, newargc = 0;
+	int argindex, option_index;;
+	uint newargc = 0;
 
 	// new argument variable with the arguments that aren't options
 	char *newargv[*argc];
-
-	int option_index;
 
 	// fill these up with opts.  That way they're easier to look up
 	for (uint i = 0; i < numopts; i++) {
@@ -133,6 +123,8 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				/* Handled differently.  This is because %s expects a char*, and copies one buffer to
 				 * the other.  This is an enormous waste because we would then have to allocate a buffer
 				 * when we could just make the string point to the same place as the other string.
+				 * Which is also better because it means we don't have to malloc data that is later freed
+				 * by the user.  Fun fact: there are no mallocs in this program!  VLAs FTW!
 				 */
 				case OPTTYPE_STRING:
 					*(char**)(wasinarg->outdata) = curropt;
@@ -198,7 +190,7 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 end:
 	*argc = newargc;
 
-	for (int i = 1; i <= newargc; i++) {
+	for (uint i = 1; i <= newargc; i++) {
 		/* -1, because argv starts at 1 (with 0 as program name), but newargv starts at 0 */
 		(*argv)[i] = newargv[i-1];
 	}

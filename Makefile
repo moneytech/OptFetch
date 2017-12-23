@@ -1,11 +1,10 @@
 CC ?= cc
-LD := $(CC)
 
 CFLAGS-base = -std=c99 -Wall -Wextra -pedantic -Werror -fPIC
 CFLAGS-release = -O2 -g0 -fomit-frame-pointer
 CFLAGS-debug = -g3 -ggdb -O0 -DDEBUG
 
-CFLAGS = $(CFLAGS-base) $(CFLAGS-release)
+CFLAGS = $(CFLAGS-base) $(CFLAGS-debug)
 
 LDFLAGS =
 
@@ -13,7 +12,7 @@ default: shared
 
 shared:
 	$(CC) $(CFLAGS) -c optfetch.c
-	$(LD) $(LDFLAGS) -shared -o liboptfetch.so optfetch.o
+	$(CC) $(LDFLAGS) -shared -o liboptfetch.so optfetch.o
 
 
 install: shared
@@ -30,7 +29,7 @@ install-static: static
 
 example: static
 	$(CC) $(CFLAGS) -c example.c
-	$(LD) $(LDFLAGS) -o example example.o liboptfetch.a
+	$(CC) $(LDFLAGS) -o example example.o liboptfetch.a
 
 clean:
-	rm optfetch.o liboptfetch.so liboptfetch.a
+	rm optfetch.o liboptfetch.so liboptfetch.a example.o
