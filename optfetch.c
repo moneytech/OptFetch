@@ -13,21 +13,17 @@ typedef unsigned int uint;
 
 
 static int countopts(struct opttype *opts) {
-	uint i = 0;
-
-	while (1) {
+	uint i;
+	for (i = 0;
 		// longname and short name are both 0, OR
-		if (((opts[i].longname == NULL) && (opts[i].shortname == 0)) ||
+		!(((opts[i].longname == NULL) && (opts[i].shortname == 0)) ||
 		// output type was unspecified OR
 		((opts[i].type == 0) || (opts[i].type > OPTTYPE_STRING)) ||
 		// nowhere to output data!
-		(opts[i].outdata == NULL)) {
-			return i;
-		}
+		(opts[i].outdata == NULL));
+		i++);
 
-		i++;
-	}
-	return 0;
+	return i;
 }
 
 static int get_option_index_short(char opt, char *potentialopts, uint len) {
