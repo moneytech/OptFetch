@@ -1,7 +1,9 @@
-#include "optfetch.h"
-#include <string.h>
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "optfetch.h"
 
 #ifdef DEBUG
 # define dbprintf(...) fprintf(stderr, __VA_ARGS__)
@@ -21,6 +23,7 @@ static int countopts(struct opttype *opts) {
 		((opts[i].type == 0) || (opts[i].type > OPTTYPE_STRING)) ||
 		// nowhere to output data!
 		(opts[i].outdata == NULL));
+
 		i++);
 
 	return i;
@@ -58,15 +61,7 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 	char *longopts[numopts];
 	char shortopts[numopts];
 	char *curropt;
-
-	// max 5 digits (%l64u) on windows, but only 4 (%llu) on unix (plus an EOF)
-#ifdef _WIN32
-	char format_specifier[6];
-#else
-	char format_specifier[5];
-#endif
-	// gotta save that extra byte of memory.
-	// It isn't even saved since it's stack-allocated and the stack is pre-allocated but *shrug*
+	char *format_specifier;
 
 	struct opttype *wasinarg = NULL;
 
@@ -98,23 +93,23 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				 * unless the user fucked something up which is
 				 * their fault!
 				 */
-				case OPTTYPE_CHAR: strcpy(format_specifier, "%c"); break;
-				case OPTTYPE_SHORT: strcpy(format_specifier, "%hi"); break;
-				case OPTTYPE_USHORT: strcpy(format_specifier, "%hu"); break;
-				case OPTTYPE_INT: strcpy(format_specifier, "%d"); break;
-				case OPTTYPE_UINT: strcpy(format_specifier, "%u"); break;
-				case OPTTYPE_LONG: strcpy(format_specifier, "%ld"); break;
-				case OPTTYPE_ULONG: strcpy(format_specifier, "%lu"); break;
+				case OPTTYPE_CHAR: format_specifier = "%c"; break;
+				case OPTTYPE_SHORT: format_specifier = "%hi"; break;
+				case OPTTYPE_USHORT: format_specifier = "%hu"; break;
+				case OPTTYPE_INT: format_specifier = "%d"; break;
+				case OPTTYPE_UINT: format_specifier = "%u"; break;
+				case OPTTYPE_LONG: format_specifier = "%ld"; break;
+				case OPTTYPE_ULONG: format_specifier = "%lu"; break;
 #ifdef _WIN32
-				case OPTTYPE_LONGLONG: strcpy(format_specifier, "%l64d"); break;
-				case OPTTYPE_ULONGLONG: strcpy(format_specifier, "%l64u"); break;
+				case OPTTYPE_LONGLONG: format_specifier = "%l64d"; break;
+				case OPTTYPE_ULONGLONG: format_specifier = "%l64u"; break;
 #else
-				case OPTTYPE_LONGLONG: strcpy(format_specifier, "%lld"); break;
-				case OPTTYPE_ULONGLONG: strcpy(format_specifier, "%llu"); break;
+				case OPTTYPE_LONGLONG: format_specifier = "%lld"; break;
+				case OPTTYPE_ULONGLONG: format_specifier = "%llu"; break;
 #endif
-				case OPTTYPE_FLOAT: strcpy(format_specifier, "%f"); break;
-				case OPTTYPE_DOUBLE: strcpy(format_specifier, "%lf"); break;
-				case OPTTYPE_LONGDOUBLE: strcpy(format_specifier, "%Lf"); break;
+				case OPTTYPE_FLOAT: format_specifier = "%f"; break;
+				case OPTTYPE_DOUBLE: format_specifier = "%lf"; break;
+				case OPTTYPE_LONGDOUBLE: format_specifier = "%Lf"; break;
 
 				/* Handled differently.  This is because %s expects a char*, and copies one buffer to
 				 * the other.  This is an enormous waste because we would then have to allocate a buffer
@@ -125,12 +120,12 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				case OPTTYPE_STRING:
 					*(char**)(wasinarg->outdata) = curropt;
 					wasinarg = NULL;
-					format_specifier[0] = 0;
+					format_specifier = NULL;
 					continue;
 			}
 			sscanf(curropt, format_specifier, wasinarg->outdata);
 			wasinarg = NULL;
-			format_specifier[0] = 0;
+			format_specifier = NULL;
 		} else {
 			// Has the user manually demanded that the option-parsing end now?
 			if (!strcmp(curropt, "--")) {
@@ -168,7 +163,7 @@ signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
 				} else {
 					// it's a boolean option, so the next loop doesn't want to know about it
 					if ((opts[option_index]).type == OPTTYPE_BOOL) {
-						*(int*)opts[option_index].outdata = 1;
+						*(bool*)opts[option_index].outdata = 1;
 						// just to make sure
 						wasinarg = NULL;
 					// let the next loop get the value
