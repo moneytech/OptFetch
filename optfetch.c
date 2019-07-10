@@ -52,11 +52,8 @@ static int get_option_index_long(char *opt, char **potentialopts, uint len) {
 }
 
 
-signed char fetchopts(int *argc, char ***argv, struct opttype *opts) {
+void fetchopts(int *argc, char ***argv, struct opttype *opts) {
 	uint numopts = countopts(opts);
-	if (!numopts) {
-		return 0;
-	}
 
 	char *longopts[numopts];
 	char shortopts[numopts];
@@ -185,6 +182,4 @@ end:
 		/* -1, because argv starts at 1 (with 0 as program name), but newargv starts at 0 */
 		(*argv)[i] = newargv[i-1];
 	}
-
-	return 1;
 }

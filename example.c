@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 int main(int argc, char **argv) {
-	int debug = false;
+	bool debug = false;
 	char *name = NULL;
 	float boat = 0.0;
 

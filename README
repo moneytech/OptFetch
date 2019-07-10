@@ -16,7 +16,7 @@ See example.c for usage.  Most of the OPTTYPES should be self-explanatory.  Do
 note that in the case of OPTTYPE_BOOL, simply receiving the flag constitutes
 being enabled, so if you want to do something like "--dox yes", you will have to
 pass an OPTTYPE_STRING and do a strcmp yourself.  The library is written in ansi
-c89, so it should work *pretty much* anywhere.
+c99, so it should work *pretty much* anywhere.
 
 The function takes pointers to argc and argv because it modifies them.  It
 removes all the flags, leaving only the arguments.  argv[0] is untouched, and

@@ -20,4 +20,4 @@ struct opttype {
 #define OPTTYPE_LONGDOUBLE 13
 #define OPTTYPE_STRING	14
 
-signed char fetchopts(int *argc, char ***argv, struct opttype *opts);
+void fetchopts(int *argc, char ***argv, struct opttype *opts);
