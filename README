@@ -1,5 +1,9 @@
 OptFetch is a lightweight library for parsing options from the command-line.
 
+It should be considered complete at this point; if no modifications have been
+for a long time, it is because there are no more modifications to make.  Any
+bugs or obvious deficiencies will be fixed; aside from that, I consider it done.
+
 
 OVERVIEW
 
