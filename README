@@ -6,32 +6,27 @@ bugs or obvious deficiencies will be fixed; aside from that, I consider it done.
 
 
 OVERVIEW
+Watch:
 
-OptFetch has just one function, fetchopts().  It takes a pointer to argc and
-argv, and an array of opttype structs.  Each opttype struct contains a "long"
-option name, a "short" option name, and option type, and a pointer to a
-variable which will hold the option.  Either of the "long" and "short" options
-may be omitted, but both may not.
+struct opttype opts[] = {
+	{"debug", 'd', OPTTYPE_BOOL, &debug},
+	{"name", 'n', OPTTYPE_STRING, &name},
+	{"boat", 'b', OPTTYPE_FLOAT, &boat},
+	{0}
+};
+fetchopts(&argc, &argv, opts);
 
+Now wasn't that easy?
 
-OVERVIEW/USAGE
-
-See example.c for usage.  Most of the OPTTYPES should be self-explanatory.  Do
-note that in the case of OPTTYPE_BOOL, simply receiving the flag constitutes
-being enabled, so if you want to do something like "--dox yes", you will have to
-pass an OPTTYPE_STRING and do a strcmp yourself.  The library is written in ansi
-c99, so it should work *pretty much* anywhere.
-
-The function takes pointers to argc and argv because it modifies them.  It
-removes all the flags, leaving only the arguments.  argv[0] is untouched, and
-still corresponds to the executable name.
+See example.c for further minutiae, and optfetch.h for the full list of argument
+types.
 
 
-IDEAS FOR THE FUTURE
-
-* Right now, both -longopt --longopt -shortopt --shortopt.  Maybe add a way to customize which are allowed?
-* Right now, if an argument begins with "-" but it is not passed in as an option, it is passed back as an argument.  If there's an intelligent way of doing so I'd like to pass this back as an invalid flag.
-* If a, b, and c are all OPTTYPE_BOOLs, you should be able to do -abc
-* * But how do we reconcile if there's a longopt called "abc"?
-* * * Could make this behaviour optional, and when it's enabled it acts similarly to getopt, where you do -shortopt, but need --longopts
-* * If a and b are OPTTYPE_BOOLs and c is an OPTTYPE_STRING, you should be able to do -abc foo
+MOTIVATION
+Right now, there are quite a few argument-parsing libraries.  Unfortunately,
+none of them are very useful to their consumers.  This is because they are too
+complicated and flexible.  This makes the library user do entirely too much work
+just to get a couple of toggleable flags; yet, at the same time, it doesn't
+offer very much to applications with complicated argument-parsing needs.  The
+latter group would be best-served by a home-rolled parser.  This project
+provides a simple solution for the former group that doesn't get in the way.
