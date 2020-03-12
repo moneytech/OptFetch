@@ -8,6 +8,9 @@ bugs or obvious deficiencies will be fixed; aside from that, I consider it done.
 OVERVIEW
 Watch:
 
+bool debug;
+char *name;
+float boat;
 struct opttype opts[] = {
 	{"debug", 'd', OPTTYPE_BOOL, &debug},
 	{"name", 'n', OPTTYPE_STRING, &name},
@@ -18,8 +21,8 @@ fetchopts(&argc, &argv, opts);
 
 Now wasn't that easy?
 
-See example.c for further minutiae, and optfetch.h for the full list of argument
-types.
+C89.  No allocations or VLAs.  See example.c for further minutiae, and
+optfetch.h for the full list of argument types.
 
 
 MOTIVATION
