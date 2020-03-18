@@ -1,10 +1,8 @@
 CC ?= cc
 
-CFLAGS-base = -std=c99 -Wall -Wextra -pedantic -Werror -fPIC
-CFLAGS-release = -O2 -g0 -fomit-frame-pointer
-CFLAGS-debug = -g3 -ggdb -O0 -DDEBUG
+CFLAGS-base = -Wall -Wextra -pedantic -Werror -fPIC
 
-CFLAGS = $(CFLAGS-base) $(CFLAGS-debug)
+CFLAGS = $(CFLAGS-base) -std=c89
 
 LDFLAGS =
 
@@ -28,8 +26,8 @@ install-static: static
 	cp liboptfetch.a /usr/local/lib/
 
 example: static
-	$(CC) $(CFLAGS) -c example.c
+	$(CC) $(CFLAGS-base) -std=c99 -c example.c
 	$(CC) $(LDFLAGS) -o example example.o liboptfetch.a
 
 clean:
-	rm optfetch.o liboptfetch.so liboptfetch.a example.o
+	rm optfetch.o liboptfetch.so liboptfetch.a example.o example
